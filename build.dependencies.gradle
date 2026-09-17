@@ -1,5 +1,6 @@
 repositories {
     mavenCentral()
+    maven { url 'https://repo.dairy.foundation/releases/' } // Pedro Pathing v3 (revhub, tuning)
     google() // Needed for androidx
 }
 
@@ -13,5 +14,12 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:12.0.0'
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    // Pedro Pathing v3 — verified against Pedro-Pathing/Quickstart's build.dependencies.gradle
+    // (master/pedro3 branches, both current as of 2026-09-16). That quickstart pins FTC SDK
+    // 11.2.1; kept this project's already-current 12.0.0 instead since there's no evidence
+    // v3 requires the older SDK pin specifically — flag this if anything doesn't resolve.
+    implementation 'com.pedropathing:revhub:3.0.0'
+    implementation 'com.pedropathing:tuning:1.0.0'
 }
 
