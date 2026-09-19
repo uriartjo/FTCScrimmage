@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedro v3 Migration Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F5F6F2;
+    --bg-elev:#FFFFFF;
+    --text:#15171B;
+    --text-muted:#5A6169;
+    --border:#DEE1D9;
+    --border-soft:#EAECE5;
+    --accent:#A8710C;
+    --accent-strong:#7E5408;
+    --accent-soft:#F2E2BC;
+    --accent-on:#241800;
+    --mono-bg:#EDEFE7;
+    --good:#3B7A46;
+    --good-soft:#DCEEDD;
+    --danger:#B33A2E;
+    --danger-soft:#F7E1DC;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#111214; --bg-elev:#18191C; --text:#EAEBE6; --text-muted:#9BA1A6;
+      --border:#2B2E31; --border-soft:#212326;
+      --accent:#E0A53A; --accent-strong:#F0BE5E; --accent-soft:#3B2E10; --accent-on:#1B1300;
+      --mono-bg:#1D2023; --good:#6FC77F; --good-soft:#193821;
+      --danger:#E5786A; --danger-soft:#3A1C17;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111214; --bg-elev:#18191C; --text:#EAEBE6; --text-muted:#9BA1A6;
+    --border:#2B2E31; --border-soft:#212326;
+    --accent:#E0A53A; --accent-strong:#F0BE5E; --accent-soft:#3B2E10; --accent-on:#1B1300;
+    --mono-bg:#1D2023; --good:#6FC77F; --good-soft:#193821;
+    --danger:#E5786A; --danger-soft:#3A1C17;
+  }
+
+  *{ box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.55;
+    padding: 0 16px;
+    margin: 0;
+  }
+  .page{ max-width: 780px; margin: 0 auto; padding-block: 40px 80px; }
+
+  h1,h2,h3{ font-family: "Newsreader", Georgia, serif; font-weight: 600; text-wrap: balance; margin:0; }
+  .kicker{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:10px;
+  }
+  h1{ font-size: clamp(28px,5vw,38px); letter-spacing:-0.01em; }
+  .byline{ color:var(--text-muted); font-size:14.5px; margin-top:10px; max-width:62ch; }
+
+  .badge-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:20px; }
+  .badge{
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    background: var(--mono-bg); border:1px solid var(--border);
+    padding:4px 10px; border-radius:20px; color:var(--text-muted);
+  }
+  .badge strong{ color: var(--text); font-weight:600; }
+
+  section{ margin-top:48px; }
+  h2{ font-size:22px; }
+  .section-sub{ color:var(--text-muted); font-size:14.5px; margin-top:6px; max-width:62ch; }
+
+  .callout{
+    margin-top:18px;
+    border:1px solid var(--danger);
+    background: var(--danger-soft);
+    border-radius:10px;
+    padding:16px 18px;
+  }
+  .callout .callout-title{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--danger); font-weight:600; margin-bottom:6px;
+  }
+  .callout p{ margin:6px 0 0; font-size:14.5px; }
+  .callout code{ background: var(--bg-elev); }
+
+  code{
+    font-family:"IBM Plex Mono",monospace; font-size:0.88em;
+    background: var(--mono-bg); border:1px solid var(--border);
+    padding:1px 5px; border-radius:5px;
+  }
+
+  table{ width:100%; border-collapse: collapse; margin-top:18px; font-size:14px; }
+  th, td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--border-soft); vertical-align:top; }
+  th{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; text-transform:uppercase;
+    letter-spacing:.03em; color:var(--text-muted); font-weight:600;
+  }
+  td code{ white-space: nowrap; }
+  .tbl-wrap{ overflow-x:auto; }
+
+  .filelist{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .fileitem{
+    display:flex; gap:12px; align-items:flex-start;
+    background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:12px 14px;
+  }
+  .fileitem .status{
+    flex:none; width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; margin-top:1px;
+  }
+  .fileitem .status.ok{ background:var(--good-soft); color:var(--good); }
+  .fileitem .path{ font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; }
+  .fileitem p{ margin:4px 0 0; font-size:13.5px; color:var(--text-muted); }
+
+  .todo{
+    display:flex; gap:12px; align-items:flex-start;
+    padding:12px 14px; background:var(--bg-elev); border:1px solid var(--border);
+    border-radius:10px; margin-top:10px;
+  }
+  .todo .n{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent);
+    flex:none; width:20px; font-weight:600;
+  }
+  .todo strong{ font-size:14.5px; }
+  .todo p{ margin:4px 0 0; font-size:13.5px; color:var(--text-muted); }
+
+  footer{
+    margin-top:64px; padding-top:20px; border-top:1px solid var(--border-soft);
+    color:var(--text-muted); font-size:12.5px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="kicker">Verified against source &amp; bytecode — not recalled from memory</div>
+  <h1>Pedro v3 Migration Map</h1>
+  <div class="byline">Everything below comes from decompiling the real v3.0.0 jars your Gradle sync already downloaded, and reading Pedro Pathing's own source at the v2.1.2 and current tags — not from training data, which predates v3 by a wide margin.</div>
+
+  <div class="badge-row">
+    <span class="badge"><strong>v3.0.0</strong> released 2026-09-10 — six days old</span>
+    <span class="badge">Official Quickstart's own <code>Constants.java</code> is a stub</span>
+    <span class="badge">21/21 translated/added files <strong>compile clean</strong> against real jars</span>
+    <span class="badge">Real ChatGPT cross-review this pass — 1 genuine bug found, 1 of its claims disproven</span>
+    <span class="badge">Season code under <code>teamcode.decode.*</code> — Pollen files under <code>teamcode.biobuzz.*</code></span>
+    <span class="badge"><strong>Update:</strong> harsh second-pass audit — 4 new findings, 2 fixed</span>
+    <span class="badge"><code>Constants.java</code> Mecanum+Pinpoint wired, compile-verified</span>
+    <span class="badge"><code>Tuning.java</code> tuner registration added, compile-verified</span>
+    <span class="badge">Shoot-on-the-move implemented — 8/8 unit tests pass, not yet calibrated</span>
+    <span class="badge"><strong>Third pass:</strong> Claude self-review + ChatGPT cross-check on live source — 3 findings, all fixed</span>
+    <span class="badge">27/27 tests still pass after all three fixes</span>
+  </div>
+
+  <section>
+    <div class="section-head"><h2>Update — a harsher second pass, checked against real bytecode</h2></div>
+    <p class="section-sub">Everything in this section was found by decompiling the real v3.0.0 jars a second time with the specific goal of finding what the first pass missed, compiling the actual repo against those jars, and reading the Huskie Physics "Shoot-on-the-Move" PDF cover to cover against what's actually in <code>Shooter.java</code>. Two of the four findings below are now fixed and compile-verified; two are disclosed, not fixed, because fixing them safely needs real hardware measurements, not more code.</p>
+
+    <div class="callout" style="border-color:var(--danger);">
+      <div class="callout-title">⚠ Finding A — every OpMode NPE'd on init(), understated in the original TODO list</div>
+      <p><code>ShooterTeleopBase.init()</code> called <code>follower = Constants.create(hardwareMap)</code> (a one-line stub returning <code>null</code>) then immediately <code>follower.setPose(startPose)</code> on the next line — a guaranteed <code>NullPointerException</code> the instant <em>any</em> of the 11 OpModes was initialized on the Driver Station. This is the exact bug shape "Landmine 4" below caught in one auto file, except it was live in literally every OpMode, and the original TODO list filed it as an inert to-do rather than "nothing in this codebase can be touched on a Driver Station today." <strong>Status: partially fixed</strong> — see <code>Constants.java</code> below.</p>
+    </div>
+
+    <div class="callout" style="border-color:var(--danger); margin-top:12px;">
+      <div class="callout-title">⚠ Finding B — "shoot on the move" was never actually implemented</div>
+      <p>Read the full Huskie Robotics 3061 physics note this migration was said to reference. Its entire content is a specific recipe: characterize the shooter → pick a static shot map → <strong>subtract the robot's velocity vector from the launch vector</strong> → rotate into the robot/turret frame. <code>Shooter.java</code>'s <code>calculateTargets</code>/<code>flywheelSpeed</code>/<code>hoodAngle</code>/<code>calculateTurretTarget</code> only ever use the robot's static position and a quadratic regression on straight-line distance — there is no reference anywhere in this codebase, old or migrated, to <code>follower.getVelocity()</code> or any robot v<sub>x</sub>/v<sub>y</sub>. That's steps 1–2 of the PDF's recipe (a static shot map), not shoot-on-the-move. Every shot taken while translating will miss in the direction of travel, exactly the scenario the cited paper exists to fix. <strong>Status: implemented this pass</strong> — see "Shoot-on-the-move" below. Not yet safe to switch on: the algorithm is real and unit-tested, but its physical calibration constants (flywheel radius, hood angle range) are still placeholders.</p>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">Finding C — Red_18Ball_lastrow's disclosed mirror inconsistency is a real 2.5&Prime; field-geometry split, plus a stale comment</div>
+      <p>The file's own javadoc already discloses that it mirrors most poses with a local <code>m(Pose)</code> helper using a 144.0-inch field length, while four gate poses use <code>RobotConstants.mirror()</code>'s 141.5-inch length — a real, live 2.5-inch difference in where the red-side gate waypoints land relative to every other pose in the same path, not just a stylistic quirk safe to leave. Separately, <code>m(Pose)</code>'s own comment claims it "only mirrors the heading when a non-zero heading was explicitly set," but the code beneath it has no such branch — it unconditionally computes <code>π − heading</code> every time. Harmless today by luck of the specific control points used, but a maintainer trusting the comment would be wrong. <strong>Status: not fixed</strong> — both disclosed in code, worth a deliberate decision on which field length is actually correct before red autos are trusted near the gate.</p>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">Finding D (self-critique) — the original Landmine 1 write-up missed that v3's own mirror utility has a different bug</div>
+      <p>Decompiling <code>PoseFactory.mirrorX</code>'s bytecode (not done in the first pass) shows it computes <code>withHeading(-heading())</code> for the mirrored pose. The verified v2.1.2 <code>Pose.mirror()</code> — and this repo's <code>RobotConstants.mirror()</code>, correctly — use <code>normalizeAngle(π − heading())</code>. These are genuinely different transforms, not just a different axis-length convention as Landmine 1 originally described. The shipped code sidesteps this correctly by never calling <code>PoseFactory</code> at all, but the audit trail didn't know that was necessary — it got the right answer without the right reason. Anyone reaching for <code>PoseFactory.mirrorX()</code> directly in the future, trusting that only the axis argument needs adjusting, will get a heading rotated 180° from the correct v2-equivalent mirrored heading.</p>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">Finding E — the tuning procedures existed but were never wired up to run</div>
+      <p><code>MecanumTuner</code>, <code>PinpointTuner</code>, and <code>ForesightTuner</code> in <code>pedro/procedures/</code> are plain classes with no <code>@Autonomous</code>/<code>@TeleOp</code> annotation — v3's tuning framework doesn't use the Driver Station opmode list at all. Decompiling <code>com.pedropathing:tuning-1.0.0</code> shows it auto-starts a web dashboard the moment the Robot/Control Hub boots (an app-lifecycle hook, no opmode needed), on <code>http://&lt;robot IP&gt;:10158</code>, and lists whichever procedures are registered via a <code>static</code> method annotated <code>@Tuner</code> returning a <code>Procedure</code> — found by scanning, the same mechanism the SDK uses for <code>@Autonomous</code>. <code>Tuning.java</code> was the empty stub (<code>// Tuners go here</code>) where that registration belongs, and it had nothing in it — the dashboard's tuner list would have shown zero tuners. <strong>Status: fixed</strong> — see <code>Tuning.java</code> below.</p>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">Finding F (self-correction) — "cannot verify ChatGPT was involved" was wrong; a real session found something real</div>
+      <p>An earlier version of this section said this environment had no way to actually talk to ChatGPT. That was wrong — a working <code>ai_pair_programming/</code> setup (real <code>OPENAI_API_KEY</code>, a Python harness) was sitting in the working directory the whole time; it just hadn't been looked for. Ran it for real this pass: fed the entire report to GPT-4o via the OpenAI API and demanded specific, sharp objections rather than generic ones (its first pass was mostly restating what the doc already disclosed, in vaguer language — pushed back and asked again). Full transcript: <code>ai_pair_programming/transcripts/discussion_20260917_135915.md</code>. One claim it made didn't survive being checked (see Finding G); one did, and led to a real fix.</p>
+    </div>
+
+    <div class="callout" style="border-color:var(--danger); margin-top:12px;">
+      <div class="callout-title">⚠ Finding G — near-vertical shots made the turret's aim noise-dominated, now fixed</div>
+      <p>ChatGPT's specific claim — that <code>atan2(vShotHoriz, vShotZ)</code> is "numerically unstable" near zero — is wrong; that call is smoothly defined everywhere, verified in Python (<code>atan2(0, 5)=0°</code>, <code>atan2(0,-5)=180°</code>, even <code>atan2(0,0)=0°</code>, never NaN). But pushing on <em>why</em> it raised that concern found a real, different bug nearby: <code>phiShot = atan2(vShotY, vShotX)</code> — the turret <strong>azimuth</strong>, not elevation — becomes noise-dominated specifically when the shot is nearly vertical (robot velocity nearly cancels the static shot's horizontal component — exactly the "lay-up" case the PDF itself describes as realistic). Simulated with plausible per-axis velocity noise on a small true horizontal vector: a 215-degree azimuth swing across 8 consecutive loop ticks. Right when the robot needs a near-vertical shot, the turret PID would have visibly hunted on noise. <strong>Fixed</strong>: <code>subtractRobotVelocity</code> now takes a <code>previousTurretRelRad</code> parameter and holds the last stable bearing whenever the horizontal shot vector drops below <code>RobotConstants.SOM_AZIMUTH_HOLD_THRESHOLD_IN_PER_SEC</code> (10 in/s, a soft safety margin, not a measured constant) — azimuth barely matters physically once a shot is nearly vertical anyway. 2 new tests confirm both the hold and that it doesn't trigger above threshold; 27/27 tests pass.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Third pass — live-source review, cross-checked with ChatGPT, 3/3 fixed</h2></div>
+    <p class="section-sub">Unlike earlier passes (which reviewed the doc's own prior claims), this pass re-read the actual current <code>Shooter.java</code>/<code>RobotConstants.java</code>/<code>ShooterTeleopBase.java</code> from scratch, independently re-derived the Huskie Physics equations against <code>subtractRobotVelocity</code> line-by-line (no discrepancy found beyond Finding G, already fixed), then sent the same three files to GPT-4o with one candidate finding and an open-ended request to hunt for anything else. All three findings below are now fixed, compiled clean, and the full 27-test suite still passes.</p>
+
+    <div class="callout" style="border-color:var(--danger);">
+      <div class="callout-title">⚠ Finding H — ADJUSTABLE mode silently used the opposite turret-tick sign convention from every other mode</div>
+      <p>Every other conversion of a turret angle to ticks in this codebase negates first: <code>Shooter.setLockedMode</code> (<code>-lockedTurretDeg * TICKS_PER_DEGREE</code>), <code>Shooter.calculateTurretTarget</code> (<code>-lastTurretRelDeg * TICKS_PER_DEGREE</code>), and <code>ShooterTeleopBase.handleModeSwitch()</code> entering <strong>FULL_MANUAL</strong>. But entering <strong>ADJUSTABLE</strong>, six lines later in the same method, had no negative sign — the opposite convention. Dormant today because <code>RobotConstants.lockedTurretDeg = 0.0</code>, but the instant a team sets a nonzero locked/home angle, switching into ADJUSTABLE would aim the turret at the mirror-image angle of every other mode. Traced to the <strong>original</strong> <code>641WinterHavenEdition-master</code> source (<code>ShooterTeleopBase.java</code> and all four legacy teleop copies) — this is a pre-existing v2 bug that survived the port faithfully, not something the migration introduced. ChatGPT's independent read of the same three files agreed it was real without being led there. <strong>Fixed</strong>: both branches now use <code>Math.round(-lockedTurretDeg * TICKS_PER_DEGREE)</code>, matching every other call site (also fixes a truncation-vs-rounding mismatch on the same two lines — up to ~0.23° of bias, cosmetic but inconsistent). Not fixed in the original v2 repo, which isn't the one being built.</p>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">Finding I — dead field <code>turretPhysicalOffset</code>, never wired up in either codebase</div>
+      <p><code>Shooter.turretPhysicalOffset</code> was declared, defaulted to <code>0</code>, and never read or written anywhere in this class or <code>ShooterTeleopBase</code> — a plausible calibration hook that looked like it was forgotten during migration. Checked against the original: it was <em>never used there either</em>, so this isn't a lost wire-up, just genuine dead code carried through two codebases. <strong>Fixed</strong>: removed rather than guessed at its intended semantics, since inventing a wiring for it risked introducing a new bug to "fix" an unused field.</p>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">Finding J — the brand-new Finding-G azimuth-hold guard had its own init-order gap</div>
+      <p><code>lastSomTurretRelRad</code> (the state Finding G's near-vertical azimuth hold reads/writes) initialized to a hardcoded <code>0.0</code> rather than the turret's actual current bearing. If <code>calculateTargetsShootOnMove</code>'s very first call ever happened to be a near-vertical shot, the hold guard would freeze the turret at field-bearing 0° instead of wherever it actually was. Low real-world stakes today since this method still isn't wired into <code>ShooterTeleopBase</code> (see Finding B/"not yet calibrated" below), but worth closing before whoever flips that switch inherits it. <strong>Fixed</strong>: a one-time <code>somTurretRelRadInitialized</code> flag now seeds <code>lastSomTurretRelRad</code> from the already-tracked <code>lastTurretRelDeg</code> (populated by any prior <code>calculateTurretTarget</code>/<code>calculateTargets</code> call) the first time the method runs, instead of trusting the field's compile-time default.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Fixed this pass — Constants.java and Tuning.java</h2></div>
+    <p class="section-sub">Both compiled clean against the real <code>core-3.0.0.jar</code>/<code>revhub-3.0.0.jar</code>/<code>tuning-1.0.0.jar</code>, alongside every file that calls them. No guessed API names — every setter/method below was checked with <code>javap</code> against the real jar before being used.</p>
+    <div class="filelist">
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">pedro/Constants.java</div><p><code>MecanumConfig</code> and <code>PinpointConfig</code> now hold real values, ported 1:1 from the v2 repo's already-tuned <code>configs/pedroPathing/Constants.java</code> (same physical robot, same Pinpoint mount): motor names/directions, pod offsets, pod type, encoder directions. <code>create()</code> still can't return a real <code>Follower</code> — <code>Foresight</code>'s config requires <code>naturalForwardDeceleration</code>/<code>naturalStrafeDeceleration</code>, real coast-down measurements with no v2 analogue and no safe placeholder — so it throws a clear, explicit exception naming exactly what's missing instead of leaving the old bare NPE two files away.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">pedro/Tuning.java</div><p>Registers all three tuners with <code>@Tuner</code> so they actually show up in the dashboard Saturday. <code>ForesightTuner</code>'s constructor needs a <code>Localizer</code> and <code>Drivetrain</code> factory to drive with while it measures — wired to reuse the same <code>Constants.pinpointConfig</code>/<code>mecanumConfig</code> above, so it's driving with the robot's real wiring, not a mock.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Shoot-on-the-move — implemented, not yet calibrated</h2></div>
+    <p class="section-sub">Finding B's fix. This is the Huskie Robotics 3061 velocity-subtraction recipe (PDF sections 1.4–1.5, Equations 8–19), coded as pure math and checked against an independent Python re-derivation of the same equations — not eyeballed. It compiles and its tests pass; it is <strong>not</strong> wired into <code>ShooterTeleopBase</code>'s live AUTO mode yet, on purpose (see the last paragraph below).</p>
+
+    <div class="callout" style="border-color:var(--accent);">
+      <div class="callout-title">The missing translation layer, now filled in</div>
+      <p>The static shot map (<code>flywheelSpeed(dist)</code>, <code>hoodAngle(dist)</code>) outputs raw actuator units — flywheel TPS, hood servo position — never a physical launch speed or angle. The PDF's vector math needs physical units to do the subtraction. Four new conversion functions in <code>Shooter.java</code> bridge that gap: <code>flywheelTpsToLaunchSpeed</code> / <code>launchSpeedToFlywheelTps</code> (Equation 5: v = π(R1+R2)·RPS·efficiency) and <code>hoodPosToLaunchAngleDeg</code> / <code>launchAngleDegToHoodPos</code> (linear interpolation over the hood's measured angle range). Each pair is a verified exact inverse of the other — see <code>ShooterSomMathTest</code>'s round-trip tests.</p>
+    </div>
+
+    <div class="filelist">
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">configs/RobotConstants.java</div><p>Six new constants: <code>FLYWHEEL_RADIUS_IN</code>, <code>FLYWHEEL_EFFICIENCY</code>, <code>FLYWHEEL_TICKS_PER_REV</code>, <code>HOOD_ANGLE_AT_MIN_DEG</code>/<code>MAX_DEG</code>, <code>SHOOTER_OFFSET_X_IN</code>/<code>Y_IN</code>. All placeholders — <code>FLYWHEEL_TICKS_PER_REV</code> is deliberately set to the nonsense value <code>1.0</code> rather than a plausible-looking guess, specifically so a forgotten TODO produces an obviously-wrong number instead of a quietly-wrong one. <code>SHOOTER_OFFSET_X_IN</code>/<code>Y_IN</code> default to 0,0, which is safe — it just disables the (PDF-labeled "less important") rotation correction until measured, rather than guessing at where the turret sits relative to robot center.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">configs/Shooter.java</div><p><code>calculateTargetsShootOnMove(Pose)</code> — same signature shape as the existing <code>calculateTargets(Pose)</code>, reads <code>follower.velocity()</code> (verified via <code>javap</code> to return field-frame vx/vy/omega, a plain delegation to the localizer — same frame <code>pose()</code> already uses) and the four conversions above. The actual vector math lives in a separate <code>public static ShotVector subtractRobotVelocity(...)</code> — pure <code>Math.*</code> calls, no hardware types, so it's unit-testable without a HardwareMap. Now also takes a <code>previousTurretRelRad</code> parameter and a private <code>lastSomTurretRelRad</code> field to hold the turret bearing steady near-vertical shots — see Finding G.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">src/test/.../decode/configs/ShooterSomMathTest.java <em>(new)</em></div><p>8 tests, all passing: zero robot velocity returns the static shot unchanged; a robot driving straight at the target needs a slower, steeper "lay-up" shot (matches the PDF's own stated intuition in section 1.3, and the numbers were independently computed in Python, not derived from the Java under test); a robot drifting sideways needs a turret correction; zero shooter offset makes the rotation correction a verified no-op even with nonzero spin; both conversion pairs are exact inverses; plus two added after the ChatGPT cross-review — a near-vertical shot holds the previous azimuth instead of trusting a noisy one, and that hold doesn't trigger above the threshold (see Finding G). Full suite (this + the two pre-existing test files) still passes — 27/27.</p></div></div>
+    </div>
+
+    <div class="callout" style="border-color:var(--danger); margin-top:16px;">
+      <div class="callout-title">⚠ Deliberately not wired into ShooterTeleopBase yet</div>
+      <p><code>ShooterTeleopBase</code>'s AUTO mode still calls the existing <code>calculateTargets(Pose)</code> — the already-tuned static map — not the new <code>calculateTargetsShootOnMove(Pose)</code>. Switching it over today would silently make shots <em>worse</em>: the physics is correct, but it's built on placeholder calibration constants (an assumed 1.5" flywheel radius, a literature 90% efficiency figure that's Huskie 3061's own measured number and not this robot's, a nonsense 1.0 ticks-per-rev sentinel, and a guessed 20°–60° hood range), so today it would compute a plausible-looking but physically wrong correction on top of an already-working static map. Swap the call once the four <code>RobotConstants</code> placeholders are replaced with real slow-mo-video measurements — see the PDF's own "Characterizing the Shooter" section (1.2) for exactly how. That's a shooter-bench measurement, independent of Saturday's drivetrain/Foresight tuning — it can happen any time someone has the physical shooter and a phone that shoots slow-mo.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Corner-start poses — a real ambiguity, not fixed</h2></div>
+    <p class="section-sub">Came up answering "can I get a teleop that just works from the blue corner near the audience wall." Tried to derive the exact pose from source and hit a genuine contradiction — flagged rather than guessed through.</p>
+    <div class="callout" style="border-color:var(--danger);">
+      <div class="callout-title">⚠ This codebase's own data disagrees on which corner is blue vs red</div>
+      <p>The code-explained doc says <code>(0,0)</code> is "one corner" of the 144"×144" field, but never says which — and nothing else in the repo says either. Two existing constants point opposite directions: <code>blueGoal = (5.0, 140.0)</code> — very low x — suggests low-x is blue's side. But <code>redReset = (9.0, 9.0)</code> — also very low x — is red's own pose, suggesting the opposite. Both can't be true under a simple "blue side is low-x" rule; either <code>redReset</code> is deliberately far from red's own corner for some tactical reason, or the mapping is simply wrong somewhere. Nothing in the source resolves which, and getting it wrong doesn't throw an error — it just makes the robot confidently mislocalized for the whole match.</p>
+    </div>
+    <p style="margin-top:10px; font-size:14.5px;"><strong>BlueAudienceCornerTeleop.java</strong> (new) is the same thin-subclass pattern as the other four teleops — but its <code>startPose</code> is <code>RobotConstants.blueAudienceCornerPose_UNVERIFIED</code>, deliberately set to <code>(-1,-1)</code>, a coordinate outside the field's valid 0–141.5 range. That's on purpose: an out-of-bounds sentinel fails obviously (Pedro will reject or visibly mis-track it) instead of a plausible-looking wrong number quietly sending the robot off in the wrong direction all match. Fill in the real pose once it's verified against the physical field — easiest way once Saturday's Pinpoint tuning is done: place the robot at the actual corner, check the live pose in telemetry, and copy those numbers in.</p>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Saturday, step by step</h2></div>
+    <p class="section-sub">Written so a teammate who's never touched Pedro's tuning tools before can follow it start to finish. Every code snippet and file path here comes from either the tuner source already in this repo or from a decompiled real v3 jar — nothing is guessed at.</p>
+
+    <div class="todo">
+      <div class="n">1</div>
+      <div><strong>Build and deploy the app to the robot, exactly as normal.</strong><p>Plug the Control/Robot Hub into your computer (or connect over WiFi like you always do), open the project in Android Studio, and click Run (or use <code>./gradlew installDebug</code> from a terminal in the project folder). This is the same "build and deploy" step you've always done — nothing about it changed. The two files fixed above (<code>Constants.java</code>, <code>Tuning.java</code>) are already in the project, so they'll be included automatically.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">2</div>
+      <div><strong>Connect to the robot's WiFi, the same network you use for the Driver Station.</strong><p>On your phone, laptop, or tablet — whichever has a web browser — join the Control Hub's WiFi network the same way you would to open the Driver Station app. You don't need the Driver Station app itself for this step, just the WiFi connection.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">3</div>
+      <div><strong>Open a web browser and go to the tuning dashboard.</strong><p>Type this into the address bar: <code>http://192.168.43.1:10158</code> (this is the Control Hub's usual WiFi-Direct address; if that doesn't load, use whatever IP address you normally see when pairing the Driver Station, followed by <code>:10158</code>). You should see a page listing three tuners: <strong>Mecanum Tuner</strong>, <strong>Pinpoint Tuner</strong>, and <strong>Foresight Tuner</strong>. If the page loads but the list is empty, the app didn't deploy the updated <code>Tuning.java</code> — go back to step 1.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">4</div>
+      <div><strong>Run "Mecanum Tuner" first.</strong><p>Click it and follow the on-screen form. It will ask for the hardware names of your four drive motors (front left, front right, back left, back right — these should be the same names already in your robot's hardware configuration, e.g. <code>fl</code>, <code>fr</code>, <code>bl</code>, <code>br</code>). Then it spins each wheel one at a time and shows a diagram — for each one, you just tell it whether the wheel spun and which direction. Keep the robot up on blocks with wheels off the ground for this step, so nothing drives off the table. When it finishes, it will show you a block of Java code starting with <code>public static MecanumConfig drivetrainConfig = new MecanumConfig(c -&gt; {...</code> — copy that whole block, you'll need it in step 8.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">5</div>
+      <div><strong>Run "Pinpoint Tuner" next.</strong><p>Same idea — it walks you through naming your Pinpoint sensor, entering the two pod offsets (how far the odometry pods are from the robot's center, in inches), and figuring out which direction each pod's encoder counts. It ends the same way, with a copy-pasteable <code>public static PinpointConfig localizerConfig = new PinpointConfig(c -&gt; {...</code> block. Copy it.</p></div>
+    </div>
+
+    <div class="callout" style="border-color:var(--danger); margin-top:12px;">
+      <div class="callout-title">⚠ Order matters here — don't run Foresight Tuner before this step</div>
+      <p>Foresight Tuner (step 8 below) drives the robot using whatever <code>mecanumConfig</code>/<code>pinpointConfig</code> is <em>currently deployed</em> — not whatever you just measured in steps 4–5 until you've actually pasted it in and redeployed. Skip straight to Foresight Tuner and it'll measure velocity/braking using the old, v2-ported drivetrain config instead of today's fresh numbers — if anything changed since then (a rewired motor, a remounted Pinpoint), Foresight's results come out quietly wrong, with no error to warn you. Step 6 below exists specifically to close that gap.</p>
+    </div>
+
+    <div class="todo">
+      <div class="n">6</div>
+      <div><strong>Paste the Mecanum + Pinpoint blocks into <code>Constants.java</code> and redeploy — before running Foresight Tuner.</strong><p>Open <code>TeamCode/.../org/firstinspires/ftc/teamcode/pedro/Constants.java</code> in Android Studio. Replace the existing <code>mecanumConfig</code> field with step 4's pasted block, and <code>pinpointConfig</code> with step 5's (rename the pasted <code>drivetrainConfig</code>/<code>localizerConfig</code> back to <code>mecanumConfig</code>/<code>pinpointConfig</code>, or update the two references in <code>create()</code> to match whatever name you pasted). Build and install the app again (same as step 1) so the robot is actually running today's numbers before Foresight Tuner measures anything with them.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">7</div>
+      <div><strong>Now take the robot off the blocks — Foresight Tuner actually drives it.</strong><p>Make sure you have several feet of clear, flat floor in front of and to the side of the robot (it will drive forward and sideways during this step, by default about 48 inches, then coast and brake).</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">8</div>
+      <div><strong>Run "Foresight Tuner" last.</strong><p>This one is longer — it runs about 10 short driving tests back to back (max forward/strafe speed, how much it naturally decelerates when you let go, how it brakes, how well it holds a heading, how well it corrects position error). Just follow each prompt in order; it tells you what distance/speed it's about to test before each one, and you can accept the suggested defaults unless you have a reason not to. When it's done, it prints a complete, ready-to-use block of code starting with <code>public static ForesightConfig foresightConfig = new ForesightConfig(...</code>. Copy the whole thing.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">9</div>
+      <div><strong>Paste the Foresight block in and flip the switch.</strong><p>Back in <code>Constants.java</code>, paste the <code>foresightConfig</code> block from step 8 in as a new field. It references <code>Controller</code>, <code>Vector2D</code>, <code>Matrix</code>, and <code>ForesightConfig</code> — none of those are imported yet, so add these four lines up top with the other imports, or Android Studio will show "cannot find symbol" errors that have nothing to do with anything you did wrong:</p>
+        <pre style="margin-top:10px; background:var(--mono-bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:'IBM Plex Mono',monospace; font-size:13px;">import com.pedropathing.algorithm.ForesightConfig;
+import com.pedropathing.controllers.Controller;
+import com.pedropathing.math.Vector2D;
+import com.pedropathing.math.Matrix;</pre>
+        <p style="margin-top:10px;">Then delete the whole <code>throw new IllegalStateException(...)</code> line inside <code>create()</code> and replace it with:</p>
+        <pre style="margin-top:10px; background:var(--mono-bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:'IBM Plex Mono',monospace; font-size:13px;">return new Follower(
+    new PinpointLocalizer(h, pinpointConfig),
+    new Mecanum(h, mecanumConfig),
+    new Foresight(foresightConfig)
+);</pre>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="n">10</div>
+      <div><strong>Rebuild, redeploy, and test teleop first — not autonomous.</strong><p>Build and install the app again. Pick any teleop OpMode (e.g. <code>BlueTeleopV2</code>) on the Driver Station, press INIT — it should no longer crash — then press START and drive it around gently. Confirm forward/back/strafe/turn all feel correct before trusting anything else. Only after teleop driving feels right should you try one of the autonomous OpModes, and watch the whole run the first time in case a path needs re-tuning (see item 3 in "Where this actually stands now" below — auto timings and poses still need real-field validation regardless of today's fix).</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <div class="callout-title">⚠ Landmine 1 — Pose.mirror() unit mismatch</div>
+      <p><code>Pose.mirror()</code> doesn't exist in v3. v2.1.2's formula (verified from source): <code>fieldLength - x</code> where <code>fieldLength = 141.5</code> (the <em>full</em> field length). v3's closest equivalent, <code>PoseFactory.mirrorX(axis)</code>, computes <code>2*axis - x</code> — its <code>axis</code> parameter is <em>half</em> the field (the centerline), not the full length. Calling <code>PoseFactory.mirrorX(141.5)</code> as a drop-in replacement doubles the mirror offset. <strong>RobotConstants.java</strong> below sidesteps this by porting v2's exact formula directly, not using <code>PoseFactory</code>.</p>
+    </div>
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">⚠ Landmine 2 — manual drive defaults to robot-centric</div>
+      <p>All four original teleops call <code>setTeleOpDrive(y, x, turn, <strong>false</strong>)</code> — verified from v2.1.2 source, <code>isRobotCentric=false</code> means the robot has been driving <strong>field-centric</strong> the whole time. v3's <code>follower.manual(...)</code> hardcodes robot-centric internally (<code>drivetrain.drive(powers, true)</code>, no way to pass a flag). A naive translation silently flips this — the driver would feel stick-forward mean "robot's front" instead of "away from me," reversing depending on which way the robot faces. Fixed in <strong>ShooterTeleopBase.java</strong> below by pre-rotating stick input through the verified <code>ManualDrive.fieldCentric(...)</code> helper before calling <code>manual()</code>.</p>
+    </div>
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">⚠ Landmine 3 — Timer renamed, found during the ChatGPT review pass</div>
+      <p>Every one of the 6 autonomous files uses <code>com.pedropathing.util.Timer</code> (singular "util") for state-machine timing — <code>pathTimer.resetTimer()</code>, <code>.getElapsedTimeSeconds()</code>, etc. That whole package is gone in v3 (confirmed 404 on the current tree); it moved to <code>com.pedropathing.utils</code> (plural), and the method names changed too: <code>resetTimer()</code> → <code>reset()</code>, <code>getElapsedTimeSeconds()</code> → <code>seconds()</code>, <code>getElapsedTime()</code> → <code>nanoseconds()</code> (verified against v2.1.2 source vs. javap on the real v3 class). Not yet fixed in code — no auto file has been ported yet — but confirmed and queued as the first item to fix, since it needs zero hardware. The pattern worth noticing: both landmines found before this one lived in exactly the two files already translated (Pose, Follower). Nothing said the untouched files were landmine-free — they just hadn't been looked at.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Also checked, no landmine found</h2></div>
+    <p class="section-sub">The ChatGPT review's top priority: audit the concrete Drivetrain/Localizer implementations before trusting <code>Constants.create()</code>'s eventual shape.</p>
+    <p style="margin-top:10px; font-size:14.5px;">Decompiled <code>revhub-3.0.0.aar</code> (not yet opened before this review): <code>new Mecanum(HardwareMap, MecanumConfig)</code> and <code>new PinpointLocalizer(HardwareMap, PinpointConfig)</code> are both plain constructors matching exactly what the MecanumTuner/PinpointTuner procedures already generate. <code>Foresight implements Algorithm</code> follows the same config-object pattern, and its internal use of <code>utils.Timer</code> independently confirms Landmine 3's package location. So the eventual <code>Constants.create()</code> is now fully sketchable and low-risk, even with the hardware-specific values still blank:</p>
+    <pre style="margin-top:10px; background:var(--mono-bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; overflow-x:auto; font-family:'IBM Plex Mono',monospace; font-size:13px;">public static Follower create(HardwareMap h) {
+    return new Follower(
+        new PinpointLocalizer(h, /* PinpointConfig from PinpointTuner's output */),
+        new Mecanum(h, /* MecanumConfig from MecanumTuner's output */),
+        new Foresight(/* ForesightConfig from ForesightTuner's output */)
+    );
+}</pre>
+    <p style="margin-top:10px; font-size:13.5px; color:var(--text-muted);">Also fully resolved this pass (was previously an inference, not yet confirmed): the <code>manual()</code>-before-<code>update()</code> loop order in <code>ShooterTeleopBase.java</code>. Read the complete body of v3's <code>Follower.update(double)</code> — the mode switch that applies drive power genuinely lives inside it, and <code>manual()</code> itself only records state. Calling <code>update()</code> first (the old v2 order) would apply last tick's stick input, one frame stale, every loop. No longer on the open-questions list.</p>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>API mapping</h2></div>
+    <p class="section-sub">Every row checked against real source or decompiled bytecode, not assumed.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>v2 (what your code does today)</th><th>v3 equivalent</th></tr></thead>
+        <tbody>
+          <tr><td><code>follower.setStartingPose(pose)</code></td><td><code>follower.setPose(pose)</code></td></tr>
+          <tr><td><code>follower.getPose()</code></td><td><code>follower.pose()</code></td></tr>
+          <tr><td><code>pose.getX()</code> / <code>getY()</code> / <code>getHeading()</code></td><td><code>pose.x()</code> / <code>y()</code> / <code>heading()</code></td></tr>
+          <tr><td><code>follower.startTeleopDrive()</code></td><td>removed — no equivalent call; <code>manual()</code> sets mode as a side effect</td></tr>
+          <tr><td><code>follower.setTeleOpDrive(fwd, strafe, turn, false)</code></td><td><code>follower.manual(ManualDrive.fieldCentric(fwd, strafe, turn, follower.pose().heading()))</code> — see Landmine 2</td></tr>
+          <tr><td><code>follower.pathBuilder().addPath(new BezierCurve(p0,p1,p2)).setLinearHeadingInterpolation(a,b).build()</code></td><td><code>Paths.curve(p0,p1,p2).heading(Interpolator.linear(a,b))</code></td></tr>
+          <tr><td><code>new BezierLine(p0,p1)</code></td><td><code>Paths.line(p0,p1)</code></td></tr>
+          <tr><td><code>follower.followPath(pathChain, true)</code></td><td><code>follower.holdEnd.set(true); follower.follow(path);</code> — verified <code>holdEnd</code> is a mutable <code>ConfigVar&lt;Boolean&gt;</code> (has <code>.get()</code>/<code>.set()</code>), so this is a real 1:1 mapping, applied at every one of the ~70 call sites across all 6 auto files</td></tr>
+          <tr><td><code>pose.mirror()</code></td><td>gone — see Landmine 1</td></tr>
+          <tr><td><code>MathFunctions.clamp(...)</code></td><td>class removed from core entirely; use your own <code>clamp()</code> (Shooter.java already had one)</td></tr>
+          <tr><td><code>follower.isBusy()</code></td><td>unchanged</td></tr>
+          <tr><td><code>follower.update()</code></td><td>unchanged (new overload <code>update(double)</code> added)</td></tr>
+          <tr><td><code>import com.pedropathing.util.Timer;</code></td><td><code>import com.pedropathing.utils.Timer;</code> — see Landmine 3</td></tr>
+          <tr><td><code>timer.resetTimer()</code></td><td><code>timer.reset()</code></td></tr>
+          <tr><td><code>timer.getElapsedTimeSeconds()</code></td><td><code>timer.seconds()</code></td></tr>
+          <tr><td><code>timer.getElapsedTime()</code></td><td><code>timer.nanoseconds()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Translated &amp; verified-compiling</h2></div>
+    <p class="section-sub">All twenty-one files compiled clean with <code>javac</code> against the real RobotCore-12.0.0, Hardware-12.0.0, and pedropathing-core-3.0.0 jars pulled from your Gradle cache — genuine compile verification, not eyeballed syntax.</p>
+    <div class="filelist">
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">util/PIDController.java · util/TurretLimiter.java</div><p>Copied verbatim — zero Pedro dependency, no translation needed.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">configs/RobotConstants.java</div><p>Pose import updated; mirror() ported exactly from v2.1.2 source (Landmine 1); every numeric constant unchanged. <code>@Configurable</code> removed — see open question below.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">configs/Shooter.java</div><p>Pose/Follower accessor renames only. PID math, hardware wiring untouched — not yet migrated onto <code>util/PIDController</code> (kept as a separate, independently-reviewable change).</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">opmodes/teleop/ShooterTeleopBase.java</div><p>Drive-call rewritten for Landmine 2. Mode dispatch, kicker sequencer, laser/RGB, turret stall guard all copied verbatim.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">opmodes/auto/Blue_18Ball.java · Red_18Ball.java</div><p>Faithful ports. Blue based on the already-reviewed, bug-fixed Blue_18Ball_V2; Red had no equivalent bug to begin with, so none was introduced.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">opmodes/auto/Blue_18Ball_lastrow.java · Red_18Ball_lastrow.java</div><p>Faithful ports, dead code (coarseAlignTurret/updateShooterVelocityPID, never called in the originals) kept in and translated, not deleted. Red_18Ball_lastrow additionally preserves a genuine pre-existing inconsistency: two different mirror-math conventions coexisting in one file — flagged in its javadoc, not silently reconciled.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">opmodes/auto/Blue_15Ball_lastrow.java · Red_15ball_lastrow.java</div><p>Blue_15Ball_lastrow had two <strong>active</strong> bugs, not just inert dead code — see Landmine 4. Both fixed and disclosed. Red_15ball_lastrow had neither; faithful port.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">biobuzz/configs/PollenTrackConstants.java · biobuzz/opmodes/teleop/PollenTrack.java</div><p>The Limelight/Hive-Vision pollen-tracking OpMode. Found a real v2-era bug while translating its drive call — see Landmine 5. Moved out of <code>teamcode.decode.*</code> into its own <code>teamcode.biobuzz.*</code> package — see "Package reorganization" below for why.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">opmodes/teleop/BlueTeleopV2.java · RedTeleopV2.java · BlueFarzoneTeleopV2.java · RedFarzoneTeleopV2.java</div><p>Thin alliance-specific subclasses of ShooterTeleopBase. Only the two Farzone variants touch Pose directly.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">opmodes/teleop/BlueAudienceCornerTeleop.java <em>(new)</em></div><p>Same pattern, a fifth alliance-corner-specific variant — but its <code>startPose</code> is an intentionally out-of-bounds <code>(-1,-1)</code> sentinel, not a real one. See "Corner-start poses" below for why.</p></div></div>
+      <div class="fileitem"><div class="status ok">✓</div><div><div class="path">src/test/.../decode/util/PIDControllerTest.java · TurretLimiterTest.java</div><p>Moved with the rest — same 19 tests, still passing in the new package.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout" style="border-color:var(--danger);">
+      <div class="callout-title">⚠ Landmine 5 — found while porting PollenTrack: wrong drive-centricity mode</div>
+      <p>PollenTrack's tracking-drive branch called <code>setTeleOpDrive(forwardPower, 0.0, turnPower, false)</code> — the same field-centric flag as every other teleop's manual stick-driving. That's wrong specifically for this branch: <code>forwardPower</code>/<code>turnPower</code> come from the Limelight's <code>tx</code> (a robot-mounted camera's own offset angle) and a steering PID driving that toward 0 — an inherently <strong>robot-relative</strong> command ("turn until the ball, as the camera sees it relative to the robot's own facing, is centered"). Field-centric mode would have rotated that command by the robot's current field heading before applying it, so the robot would drive toward field-absolute "forward" instead of toward the locked ball the moment its heading differed from 0 — a pre-existing v2 bug, unrelated to the version migration, only surfaced because translating <code>isRobotCentric</code>'s exact meaning required reading it that carefully. Fixed: the tracking branch now calls <code>follower.manual(forwardPower, 0.0, turnPower)</code> directly, no <code>fieldCentric()</code> wrapping — v3's <code>manual()</code> is robot-centric by construction, which is exactly what this branch always needed. The manual stick-driving branch still gets the <code>fieldCentric()</code> wrapper, since that part was correct in the original.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Preparing the Limelight — Hive-Vision setup</h2></div>
+    <p class="section-sub">Pulled from Hive-Vision's own README (github.com/sidhuharjas/Hive-Vision, fetched live) and Limelight's official docs for the 3A specifically — not from general Limelight knowledge, since the 3A differs from older Limelights in a way that matters here (see step 5). This doesn't need Saturday's robot-driving tuners and can be done any time, on its own.</p>
+
+    <div class="callout" style="border-color:var(--accent);">
+      <div class="callout-title">Model file to use — do not grab the wrong one</div>
+      <p>Hive-Vision ships <em>several</em> model files and only one is correct for a Limelight 3A. The repo's own README is explicit about this: <code>best.onnx</code> and <code>best.pt</code> are for a PC/Jetson running ONNX Runtime, <strong>not</strong> a Limelight — "no Limelight runs ONNX." The float32 <code>best_limelight3a_float32.tflite</code> is a PC-side verification artifact only — the 3A's neural detector will not load it (it needs full-INT8). The one file that actually goes on the robot's Limelight 3A is:</p>
+      <p style="margin-top:8px;"><code>yolo/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite</code> + <code>yolo/weights/labels.txt</code></p>
+      <p style="margin-top:8px;">This is an SSD-MobileNetV2 model retrained specifically for the 3A's required <code>TFLite_Detection_PostProcess</code> contract (uint8 300×300 input, float32 outputs) — a different architecture from the YOLOv8n used everywhere else in the repo, not just a re-export of it. <code>labels.txt</code> defines class order <code>yellow_pollen</code> (0), <code>red_nectar</code> (1), <code>blue_nectar</code> (2) — this is exactly why <code>PollenTrackConstants.POLLEN_CLASS_ID = 0</code> means yellow, and it must stay 0 unless <code>labels.txt</code> is re-ordered.</p>
+    </div>
+
+    <div class="todo">
+      <div class="n">1</div>
+      <div><strong>Wire the Limelight 3A to the Control Hub.</strong><p>Run a USB-C to USB-A cable from the Limelight 3A to the Control Hub's <strong>USB 3.0 port (the blue one)</strong> — per Limelight's own hardware guide, this is required, a USB 2.0 port will not give it enough bandwidth. Mount it with at least 2 screws through its M3/M4 threaded holes if it isn't already on the robot.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">2</div>
+      <div><strong>Open the Limelight's own web interface — not the FTC Driver Station.</strong><p>Wait about 15–20 seconds after power-up for its status light to turn on, then either open the "Limelight Hardware Manager" desktop app and double-click the device when it appears, or open a browser and go to <code>http://limelight.local:5801</code>. <strong>Caveat I can't fully verify from here:</strong> Limelight's own docs describe this working when your computer is plugged directly into the Limelight over USB — I have not confirmed whether <code>limelight.local</code> resolves the same way once the Limelight is instead wired into the Control Hub and you're connecting over the Control Hub's WiFi. If that address doesn't load, use the Hardware Manager app instead (more reliable for finding the device either way), or fall back to browsing the Control Hub's own WiFi-Direct IP on port 5801.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">3</div>
+      <div><strong>Go to pipeline slot 0 and set its type to "Neural Detector."</strong><p>The Limelight supports 10 pipeline slots (0–9); <code>PollenTrackConstants.LIMELIGHT_POLLEN_PIPELINE = 0</code> means the robot code always switches to slot 0, so upload the model there specifically, not just "a" slot. In that pipeline's settings, change "Pipeline Type" to <strong>Neural Detector</strong>.</p></div>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-title">⚠ Don't skip this — the 3A can't use Google Coral</div>
+      <p>Older Limelights (1/2/3) accelerate neural networks with a Google Coral USB stick. The <strong>3A does not support Google Coral at all</strong> — confirmed on Limelight's own hardware page. Neural Detector pipelines on a 3A run in CPU mode instead. In the pipeline's runtime engine setting, make sure it's set to <strong>"CPU"</strong>, not "Coral" — Limelight's own custom-model instructions specifically call out changing this from "coral" to "cpu" for 3A users, because trainer output defaults to Coral. If this is left on Coral, the model will not run.</p>
+    </div>
+
+    <div class="todo">
+      <div class="n">4</div>
+      <div><strong>Upload the model and labels file.</strong><p>Still on the Neural Detector pipeline page, use its model upload control to upload <code>best_limelight3a_ssd_mobilenetv2_300x300.tflite</code>, then upload <code>labels.txt</code> alongside it. The Limelight will reload the pipeline after upload — give it a few seconds.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">5</div>
+      <div><strong>Point the camera at a yellow pollen ball and confirm live detection in the web UI before touching any code.</strong><p>The pipeline view should draw a box around the ball labeled <code>yellow_pollen</code> with a confidence percentage. If nothing draws, double check step 3's pipeline type and the CPU/Coral setting above before assuming the code is broken — this step isolates whether the problem is on the Limelight side or the robot-code side.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">6</div>
+      <div><strong>Confirm the Limelight is named "limelight" in the robot's hardware configuration.</strong><p><code>PollenTrack.java</code> looks it up with <code>hardwareMap.get(Limelight3A.class, "limelight")</code> — on the Driver Station, open the active robot configuration and make sure the Limelight entry is literally named <code>limelight</code> (lowercase), or that line in code and the configuration will disagree and it'll fail to find the device at init.</p></div>
+    </div>
+
+    <div class="todo">
+      <div class="n">7</div>
+      <div><strong>Run the PollenTrack teleop and watch its telemetry, not just the robot's movement.</strong><p>Hold gamepad1's right trigger (the tracking-drive trigger) and check the telemetry for detections, locked target info, and tx/ty — this confirms the FTC-side <code>LLResult</code>/<code>LLResultTypes</code> reading is actually working end-to-end, not just that the Limelight's own web UI can see the ball. <code>PollenTrackConstants.CONFIDENCE_FLOOR = 45.0</code> is a second, separate confidence filter applied in robot code on top of whatever the Limelight itself reports — if detections show in the Limelight UI but never register in telemetry, check that filter and the <code>ARRIVED_AREA</code>/<code>ARRIVED_TX_TOLERANCE_DEG</code> field comment's note to tune those two from real field telemetry, same as it says.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Package reorganization</h2></div>
+    <p class="section-sub">All Decode-season code now lives under its own package, separate from anything season-agnostic.</p>
+    <p style="margin-top:10px; font-size:14.5px;">FTC's OpMode registration finds <code>@TeleOp</code>/<code>@Autonomous</code> classes by scanning annotations across the whole app — it doesn't care about package location, so this is fully supported, not a workaround. Every file above moved from <code>org.firstinspires.ftc.teamcode.{configs,util,opmodes}</code> to <code>org.firstinspires.ftc.teamcode.decode.{configs,util,opmodes}</code>. <code>org.firstinspires.ftc.teamcode.pedro.*</code> (Pedro's own scaffold — Constants, Tuning, the AutoTune procedures) stayed where it is, since that's robot/drivetrain plumbing, not specific to this game season. Re-verified compiling and re-ran all 19 tests after the move — both clean.</p>
+    <p style="margin-top:10px; font-size:13.5px; color:var(--text-muted);"><strong>Update:</strong> <code>decode</code> was the wrong season name to migrate under in the first place — this season is <strong>BioBuzz</strong>, not "Decode" (the Hive-Vision pollen/nectar theme is a giveaway). Rather than rename all twenty files a second time, only <code>PollenTrackConstants.java</code> and <code>PollenTrack.java</code> — the two files that are actually BioBuzz-specific in a way that matters here — moved to <code>org.firstinspires.ftc.teamcode.biobuzz.{configs,opmodes.teleop}</code>. Everything else stays under <code>teamcode.decode.*</code> for now; the two packages coexist. Re-verified compiling clean against the real jars after the move.</p>
+  </section>
+
+  <section>
+    <div class="callout" style="border-color:var(--danger);">
+      <div class="callout-title">⚠ Landmine 4 — found while porting the autos: two active bugs in Blue_15Ball_lastrow</div>
+      <p><strong>Init order:</strong> the original constructs <code>shooter = new Shooter(hardwareMap, follower, telemetry)</code> <em>before</em> <code>follower = Constants.createFollower(hardwareMap)</code> runs. <code>Shooter</code> stores that reference in a <code>final</code> field — it would have permanently captured <code>null</code>, guaranteeing an NPE the moment <code>Constants.create()</code> stops being a stub. Fixed by reordering (matches every other ported file already).</p>
+      <p style="margin-top:8px;"><strong>Redundant, overriding control:</strong> the original calls its own <code>coarseAlignTurret()</code> every loop, then <code>shooter.driveTurret()</code> immediately overwrites its output — so that entire computation had zero effect on the robot. Same story for the flywheel: <code>shooter.driveFlywheels(true)</code> runs, then a separate hardcoded-1500-TPS PID overwrites it via a direct <code>setPower()</code> call. Same underlying category as the flywheel bug already fixed in <code>Blue_18Ball.java</code>, just shaped as compute-then-overwrite instead of never-called. Fixed the same low-risk way two sibling files already do elsewhere in this codebase: call sites commented out, methods left in place, not deleted.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Where this actually stands now</h2></div>
+    <p class="section-sub">All source-level work is done — every file that can be written without touching the robot has been. What's left genuinely needs hardware.</p>
+    <div class="todo">
+      <div class="n">1</div>
+      <div><strong>Saturday: run the tuners and finish <code>Constants.create()</code></strong><p>See the "Saturday, step by step" section above — <code>Tuning.java</code> now registers the Mecanum/Pinpoint/Foresight tuners with the web dashboard, and <code>Constants.java</code> is pre-wired with everything that didn't need the robot. Still the one step that blocks everything else, but now a guided walkthrough instead of an open-ended task.</p></div>
+    </div>
+    <div class="todo">
+      <div class="n">2</div>
+      <div><strong>First thing once a real Follower exists: run ShooterTeleopBase and check it feels right</strong><p>The one part of this whole effort still purely theoretical — the fieldCentric translation and manual()/update() ordering are verified against source, not against an actual driver's hands on sticks.</p></div>
+    </div>
+    <div class="todo">
+      <div class="n">3</div>
+      <div><strong>Then: run the ported autos and re-tune path timings/poses on the real field</strong><p>All 6 compile and are structurally faithful to the originals, but path timings, the shoot() sequencing quirk flagged in Blue_15Ball_lastrow, and the pre-existing pose-drift between RobotConstants and the auto files' own literals (Red_18Ball_lastrow) all still need real-field validation — a source-level port doesn't validate tuning.</p></div>
+    </div>
+    <div class="todo">
+      <div class="n">4</div>
+      <div><strong>Whenever convenient — decide on the <code>@Configurable</code> dashboard dependency</strong><p><code>com.bylazar:fullpanels</code> isn't part of v3's dependency set and wasn't re-added. Either bring it back, or check whether <code>com.pedropathing:tuning</code> offers an equivalent (unverified either way).</p></div>
+    </div>
+    <div class="todo">
+      <div class="n">5</div>
+      <div><strong>Shoot-on-the-move: code is done and tested — now it needs a tape measure and a slow-mo camera</strong><p>See "Shoot-on-the-move" above — the velocity-subtraction algorithm, the actuator-unit conversions, and 8 passing unit tests are all in <code>Shooter.java</code>/<code>ShooterSomMathTest.java</code>. What's left is measuring the four placeholders in <code>RobotConstants.java</code> (flywheel radius, motor ticks/rev, hood angle range at its two servo extremes) via the PDF's own "Characterizing the Shooter" method, then flipping <code>ShooterTeleopBase</code>'s AUTO mode from <code>calculateTargets</code> to <code>calculateTargetsShootOnMove</code>. Independent of Saturday's drivetrain tuning — a shooter-bench task, can happen any time.</p></div>
+    </div>
+    <div class="todo">
+      <div class="n">6</div>
+      <div><strong>Resolve the blue/red-to-corner mapping, then fill in BlueAudienceCornerTeleop's pose</strong><p>See "Corner-start poses" above — settle whether low-x is genuinely blue's side (checking against the physical field, not more code-reading, since the existing constants contradict each other), then replace <code>RobotConstants.blueAudienceCornerPose_UNVERIFIED</code>'s <code>(-1,-1)</code> sentinel with the real, verified corner pose.</p></div>
+    </div>
+  </section>
+
+  <footer>Generated during a Claude Code session, from bytecode in <code>~/.gradle/caches</code> and source pulled live from Pedro-Pathing/PedroPathing (tags <code>v2.1.2</code>, current) and Pedro-Pathing/Quickstart (branches <code>master</code>/<code>pedro3</code>, confirmed identical as of 2026-09-16).</footer>
+</div>
+</body>
+</html>
